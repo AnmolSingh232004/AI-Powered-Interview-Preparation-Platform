@@ -2,6 +2,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
+import RegisterPage from "./pages/RegisterPage";
+
 
 function App() {
 
@@ -16,8 +18,7 @@ function App() {
     return (
         <Routes>
 
-            <Route
-                path="/login"
+            <Route path="/login"
                 element={
                     isLoggedIn
                         ? <Navigate to="/dashboard" />
@@ -33,6 +34,12 @@ function App() {
                         : <Navigate to="/login" />
                 }
             />
+
+            <Route
+                path="/register"
+                element={<RegisterPage />}
+            />
+
 
             <Route path="*" element={<Navigate to="/login" />} />
 

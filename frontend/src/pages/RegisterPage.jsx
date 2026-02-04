@@ -8,36 +8,43 @@ import {
     Container,
     TextField,
     Typography,
+    MenuItem,
+    Select
 } from "@mui/material";
 
-function LoginPage({ setIsLoggedIn }) {
+function RegisterPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [role, setRole] = useState("USER");
     const [error, setError] = useState("");
 
     const navigate = useNavigate();
 
-    const login = async () => {
+    const register = async () => {
         setError("");
 
         try {
-            const response = await fetch(import.meta.env.VITE_API_URL+ "/api/auth/login", {
+            const response = await fetch(import.meta.env.VITE_API_URL + "/api/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({
+                    email,
+                    password,
+                    role
+                }),
             });
+            const data = await response.json();
 
             if (!response.ok) {
-                throw new Error("Invalid credentials");
+                setError(data.message || "Register failed.");
+                return;
             }
 
-            const data = await response.json();
-            localStorage.setItem("token", data.token);
-            setIsLoggedIn(true);
-            navigate("/dashboard");
+            // After successful register → go to login
+            navigate("/login");
 
-        } catch {
-            setError("Invalid email or password");
+        } catch (err) {
+            setError("User already exists or invalid data");
         }
     };
 
@@ -64,7 +71,7 @@ function LoginPage({ setIsLoggedIn }) {
                             color="text.secondary"
                             mb={4}
                         >
-                            Login to your account
+                            Create your account
                         </Typography>
 
                         <TextField
@@ -84,6 +91,16 @@ function LoginPage({ setIsLoggedIn }) {
                             onChange={(e) => setPassword(e.target.value)}
                         />
 
+                        <Select
+                            fullWidth
+                            value={role}
+                            onChange={(e) => setRole(e.target.value)}
+                            sx={{ mt: 2 }}
+                        >
+                            <MenuItem value="USER">User</MenuItem>
+                            <MenuItem value="ADMIN">Admin</MenuItem>
+                        </Select>
+
                         {error && (
                             <Typography color="error" mt={2}>
                                 {error}
@@ -95,18 +112,17 @@ function LoginPage({ setIsLoggedIn }) {
                             variant="contained"
                             size="large"
                             sx={{ mt: 4 }}
-                            onClick={login}
+                            onClick={register}
                         >
-                            Login
+                            Register
                         </Button>
 
-                        {/* 🔥 NEW REGISTER REDIRECT */}
                         <Button
                             fullWidth
                             sx={{ mt: 2 }}
-                            onClick={() => navigate("/register")}
+                            onClick={() => navigate("/login")}
                         >
-                            Don’t have an account? Register
+                            Already have an account? Login
                         </Button>
 
                     </CardContent>
@@ -116,4 +132,4 @@ function LoginPage({ setIsLoggedIn }) {
     );
 }
 
-export default LoginPage;
+export default RegisterPage;

@@ -1,10 +1,10 @@
 package com.ai.interview.backend.DTO;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class RegisterRequest {
     private String email;
     private String password;

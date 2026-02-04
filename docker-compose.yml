@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: interview-postgres
+    environment:
+      POSTGRES_DB: interviewdb
+      POSTGRES_USER: interview
+      POSTGRES_PASSWORD: interview
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: interview-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/interviewdb
+      SPRING_DATASOURCE_USERNAME: interview
+      SPRING_DATASOURCE_PASSWORD: interview
+
+  frontend:
+    build: ./frontend
+    container_name: interview-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
